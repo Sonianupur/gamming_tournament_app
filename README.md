@@ -7,24 +7,38 @@ An interactive web application for browsing, managing, and registering for gamin
 ## 🚀 Features
 
 ### 🧑‍💻 User
-- Sign up and log in securely using Firebase Auth
-- full User dashboard
-- View available tournaments
-- Register for events
-- View registration history
-- Explore tournaments on an interactive map
-- logout
+- Secure Authentication via Firebase (Signup/Login with role-based access)
+
+- User Dashboard with access to search, registration, and history
+
+- Browse & Search Tournaments by title, date, and location
+
+- Register for Tournaments with real-time spot availability
+
+- View & Cancel Registrations through a personal history list
+
+- Interactive Map using Leaflet (no React wrapper) with clickable tournament markers
+
+- Logout Securely at any time
+
 
 ### 👩‍💼 Admin
 
-- Full admin dashboard
-- View available tournaments
-- Add new tournaments with location (latitude/longitude)
-- Edit and manage existing tournaments
-- Explore tournaments on an interactive map
-- View registration history
-- cancel an event
-- logout
+- Full Admin Dashboard with role-restricted access
+
+- View All Tournaments in a comprehensive list
+
+- Add New Tournaments with title, date, and geolocation (latitude/longitude)
+
+- Edit & Manage Tournaments including updates and spot tracking
+
+- Interactive Map to visualize and manage tournament locations
+
+- View Registration History for all events
+
+- Cancel Tournaments as needed
+
+- Logout Securely at any time
 
 ## 👥 Test Login Credentials
 
@@ -51,6 +65,9 @@ An interactive web application for browsing, managing, and registering for gamin
 - **Leaflet.js** (interactive map without react-leaflet)
 - **Tailwind CSS** (styling)
 - **JavaScript / TypeScript**
+- git clone https://github.com/Sonianupur/gamming_tournament_app.git
+cd gamming_tournament_app
+
 
 How to Run the Project (Locally)
 
@@ -94,13 +111,13 @@ Then the browser can be opened to:
 
 ---
 
-## 🧪 Example Firebase Data
+##  Example Firebase Data
 
 ### ✅ `users` collection:
 ```json
 {
   "email": "admin@email.com",
-  "name": "Admin",
+  
   "role": "admin"
 }
 ```
