@@ -1,8 +1,9 @@
 "use client";
 import React, { useState } from "react";
 import { loginUser } from "../firebase/firebaseAuth";
-// import { auth } from "../firebase/firebase"; // Correct import
+import { auth, db } from "../firebase/firebase";
 import { signOut } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -14,8 +15,17 @@ const Login = () => {
     e.preventDefault();
     try {
       const loggedInUser = await loginUser(email, password);
-      setUser(loggedInUser);
-      setError("");
+      // Get role from Firestore
+      const userDocRef = doc(db, "users", loggedInUser.uid);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        setUser({ ...loggedInUser, role: userData.role });
+        setError("");
+      } else {
+        setError("User role not found in Firestore.");
+      }
     } catch (err) {
       setError(err.message);
     }
@@ -62,8 +72,16 @@ const Login = () => {
           {error && <p className="text-red-500 mt-2">{error}</p>}
         </div>
       ) : (
-        <div>
+        <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Welcome, {user.email}</h1>
+          <p className="mb-2">
+            <span className="font-semibold">Role:</span>{" "}
+            {user.role === "admin" ? (
+              <span className="text-green-600">Admin</span>
+            ) : (
+              <span className="text-blue-600">User</span>
+            )}
+          </p>
           <button
             onClick={handleLogout}
             className="bg-red-500 text-white px-4 py-2 rounded"

@@ -1,13 +1,13 @@
+// firebase/firebaseAuth.js
 import { signInWithEmailAndPassword } from "firebase/auth";
-// import { auth } from "./firebase";
+import { auth } from "./firebase";
 
-// Function to log in a user
+// Function to login user with Firebase Authentication
 export const loginUser = async (email, password) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return userCredential.user; // Returns the logged-in user
+    return userCredential.user;
   } catch (error) {
-    console.error("Error logging in:", error.message);
-    throw error;
+    throw new Error(error.message);
   }
 };
