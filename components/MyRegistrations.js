@@ -13,10 +13,10 @@ import {
   updateDoc,
 } from "firebase/firestore";
 
-const MyRegistrations = () => {
+export default function MyRegistrations() {
   const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [mounted, setMounted] = useState(false); // SSR-safe flag
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -27,31 +27,36 @@ const MyRegistrations = () => {
       const user = auth.currentUser;
       if (!user) return;
 
-      const q = query(
-        collection(db, "registrations"),
-        where("userId", "==", user.uid)
-      );
+      try {
+        const q = query(
+          collection(db, "registrations"),
+          where("userId", "==", user.uid)
+        );
+        const snapshot = await getDocs(q);
 
-      const querySnapshot = await getDocs(q);
-      const regList = [];
+        const regList = [];
 
-      for (const docSnap of querySnapshot.docs) {
-        const regData = docSnap.data();
-        const tournamentRef = doc(db, "tournaments", regData.tournamentId);
-        const tournamentSnap = await getDoc(tournamentRef);
-        const tournamentData = tournamentSnap.exists()
-          ? tournamentSnap.data()
-          : {};
+        for (const docSnap of snapshot.docs) {
+          const regData = docSnap.data();
+          const tournamentRef = doc(db, "tournaments", regData.tournamentId);
+          const tournamentSnap = await getDoc(tournamentRef);
+          const tournamentData = tournamentSnap.exists()
+            ? tournamentSnap.data()
+            : {};
 
-        regList.push({
-          id: docSnap.id,
-          ...regData,
-          ...tournamentData,
-        });
+          regList.push({
+            id: docSnap.id,
+            ...regData,
+            ...tournamentData,
+          });
+        }
+
+        setRegistrations(regList);
+      } catch (err) {
+        console.error("Error fetching registrations:", err);
+      } finally {
+        setLoading(false);
       }
-
-      setRegistrations(regList);
-      setLoading(false);
     };
 
     fetchRegistrations();
@@ -64,53 +69,56 @@ const MyRegistrations = () => {
       const tournamentRef = doc(db, "tournaments", reg.tournamentId);
       const tournamentSnap = await getDoc(tournamentRef);
       if (tournamentSnap.exists()) {
-        const remaining = tournamentSnap.data().remainingSpots ?? 0;
+        const currentSpots = tournamentSnap.data().remainingSpots ?? 0;
         await updateDoc(tournamentRef, {
-          remainingSpots: remaining + 1,
+          remainingSpots: currentSpots + 1,
         });
       }
 
       setRegistrations((prev) => prev.filter((r) => r.id !== reg.id));
-    } catch (err) {
-      console.error("Cancel failed:", err);
+    } catch (error) {
+      console.error("Cancel failed:", error);
     }
   };
 
   if (!mounted) return null;
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">My Tournament History</h1>
+    <div className="min-h-[70vh] px-6 py-12 text-white">
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        My Tournament Registrations
+      </h1>
+
       {loading ? (
-        <p>Loading...</p>
+        <p className="text-center text-gray-300">Loading...</p>
       ) : registrations.length === 0 ? (
-        <p>You have not registered for any tournaments.</p>
+        <p className="text-center text-gray-400">No registrations found.</p>
       ) : (
-        <ul className="space-y-4">
+        <div className="space-y-6 max-w-3xl mx-auto">
           {registrations.map((reg) => (
-            <li key={reg.id} className="border p-4 rounded shadow-sm">
-              <h2 className="text-lg font-semibold">{reg.title}</h2>
-              <p>Date: {reg.date}</p>
-              <p>Location: {reg.location}</p>
-              <p>Status: Registered</p>
-              <p>
-                Registered At:{" "}
-                {reg.timestamp && typeof reg.timestamp.toDate === "function"
+            <div
+              key={reg.id}
+              className="bg-black bg-opacity-60 border border-gray-700 p-6 rounded shadow"
+            >
+              <h2 className="text-xl font-semibold mb-1">{reg.title || "Untitled Tournament"}</h2>
+              <p className="text-sm text-gray-300">📅 Date: {reg.date || "N/A"}</p>
+              <p className="text-sm text-gray-300">📍 Location: {reg.location || "N/A"}</p>
+              <p className="text-sm text-gray-400 italic mb-2">
+                Registered at:{" "}
+                {reg.timestamp?.toDate
                   ? reg.timestamp.toDate().toLocaleString()
-                  : "N/A"}
+                  : "Unknown"}
               </p>
               <button
                 onClick={() => handleCancel(reg)}
-                className="mt-2 px-4 py-1 rounded bg-red-600 text-white hover:bg-red-700"
+                className="mt-2 px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 transition"
               >
                 Cancel Registration
               </button>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );
-};
-
-export default MyRegistrations;
+}

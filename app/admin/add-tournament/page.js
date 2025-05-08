@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { auth, db } from "@/firebase/firebase";
 import { getDoc, doc } from "firebase/firestore";
-import AddTournamentForm from "@/components/AddTournament"; // ✅ Check path
+import AddTournamentForm from "@/components/AddTournament"; // ✅ Your form component
+import Layout from "@/components/Layout"; // ✅ Add Layout wrapper
 
 const AddTournamentPage = () => {
   const [userRole, setUserRole] = useState(null);
@@ -13,22 +14,19 @@ const AddTournamentPage = () => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (!user) {
         console.warn("User not logged in");
-        setUserRole("guest"); // ← Added to prevent stuck state
+        setUserRole("guest");
         setLoading(false);
         return;
       }
-
-      console.log("User UID:", user.uid);
 
       try {
         const userDoc = await getDoc(doc(db, "users", user.uid));
         if (userDoc.exists()) {
           const role = userDoc.data().role;
-          console.log("Fetched role from Firestore:", role);
           setUserRole(role);
         } else {
           console.warn("User document not found in Firestore.");
-          setUserRole("guest"); // ← Added fallback
+          setUserRole("guest");
         }
       } catch (err) {
         console.error("Error fetching user role:", err);
@@ -41,13 +39,19 @@ const AddTournamentPage = () => {
     return () => unsubscribe();
   }, []);
 
-  if (loading) return <p className="p-4">Loading...</p>;
-
-  if (userRole !== "admin") {
-    return <p className="text-red-600 p-4">Access denied. Admins only.</p>;
-  }
-
-  return <AddTournamentForm />;
+  return (
+    <Layout>
+      <div className="p-6 min-h-screen text-white">
+        {loading ? (
+          <p className="text-center">Loading...</p>
+        ) : userRole !== "admin" ? (
+          <p className="text-center text-red-400">Access denied. Admins only.</p>
+        ) : (
+          <AddTournamentForm />
+        )}
+      </div>
+    </Layout>
+  );
 };
 
 export default AddTournamentPage;

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { auth, db } from "@/firebase/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import Layout from "@/components/Layout"; // ✅ Import Layout
 
 export default function UserDashboard() {
   const [name, setName] = useState(null);
@@ -41,39 +42,46 @@ export default function UserDashboard() {
     router.push("/login");
   };
 
-  if (loading) return <p className="p-6 text-center">Loading Dashboard...</p>;
+  if (loading)
+    return (
+      <Layout>
+        <p className="p-6 text-center">Loading Dashboard...</p>
+      </Layout>
+    );
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-3xl font-bold mb-2 text-center">Welcome, {name}!</h1>
-      <p className="text-center text-gray-600 mb-6">Email: {userEmail}</p>
+    <Layout>
+      <div className="min-h-[70vh] bg-100 p-6 text-center">
+        <h1 className="text-3xl font-bold mb-2">Welcome, {name}!</h1>
+        <p className="text-bg-600 mb-6">Email: {userEmail}</p>
 
-      <div className="flex flex-col gap-4 max-w-sm mx-auto">
-        <button
-          onClick={() => router.push("/search")}
-          className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-        >
-          Browse Tournaments
-        </button>
-        <button
-          onClick={() => router.push("/my-registrations")}
-          className="bg-green-600 text-white py-2 rounded hover:bg-green-700"
-        >
-          My Registrations
-        </button>
-        <button
-          onClick={() => router.push("/tournament-map")}
-          className="bg-purple-600 text-white py-2 rounded hover:bg-purple-700"
-        >
-          View Tournament Map
-        </button>
-        <button
-          onClick={handleLogout}
-          className="bg-red-600 text-white py-2 rounded hover:bg-red-700"
-        >
-          Logout
-        </button>
+        <div className="flex flex-col gap-4 max-w-sm mx-auto">
+          <button
+            onClick={() => router.push("/search")}
+            className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          >
+            Browse Tournaments
+          </button>
+          <button
+            onClick={() => router.push("/my-registrations")}
+            className="bg-green-600 text-white py-2 rounded hover:bg-green-700"
+          >
+            My Registrations
+          </button>
+          <button
+            onClick={() => router.push("/tournament-map")}
+            className="bg-purple-600 text-white py-2 rounded hover:bg-purple-700"
+          >
+            View Tournament Map
+          </button>
+          <button
+            onClick={handleLogout}
+            className="bg-red-600 text-white py-2 rounded hover:bg-red-700"
+          >
+            Logout
+          </button>
+        </div>
       </div>
-    </div>
+    </Layout>
   );
 }

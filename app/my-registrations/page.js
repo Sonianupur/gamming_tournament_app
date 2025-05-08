@@ -1,5 +1,12 @@
-import MyRegistrations from "../../components/MyRegistrations"; // ✅ match filename & export
+"use client";
 
-export default function MyRegistrationsPage() { // ✅ use a different name
-  return <MyRegistrations />; // ✅ match the component name
+import Layout from "@/components/Layout";
+import MyRegistrations from "@/components/MyRegistrations";
+
+export default function MyRegistrationsPage() {
+  return (
+    <Layout>
+      <MyRegistrations />
+    </Layout>
+  );
 }
