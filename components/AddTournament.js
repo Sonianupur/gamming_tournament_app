@@ -10,8 +10,8 @@ const AddTournament = () => {
     date: "",
     location: "",
     totalSpots: "",
-    lat: "",
-    lng: "",
+    latitude: "",
+    longitude: "",
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -21,15 +21,15 @@ const AddTournament = () => {
     setError("");
     setSuccess("");
 
-    const { title, date, location, totalSpots, lat, lng } = form;
+    const { title, date, location, totalSpots, latitude, longitude } = form;
 
-    if (!title || !date || !location || !totalSpots || !lat || !lng) {
+    if (!title || !date || !location || !totalSpots || !latitude || !longitude) {
       setError("All fields are required.");
       return;
     }
 
-    const latNum = parseFloat(lat);
-    const lngNum = parseFloat(lng);
+    const latNum = parseFloat(latitude);
+    const lngNum = parseFloat(longitude);
     if (isNaN(latNum) || isNaN(lngNum)) {
       setError("Latitude and Longitude must be valid numbers.");
       return;
@@ -42,8 +42,8 @@ const AddTournament = () => {
         location,
         totalSpots: Number(totalSpots),
         remainingSpots: Number(totalSpots),
-        lat: latNum,
-        lng: lngNum,
+        latitude: latNum,
+        longitude: lngNum,
         registeredUsers: [],
       });
 
@@ -53,8 +53,8 @@ const AddTournament = () => {
         date: "",
         location: "",
         totalSpots: "",
-        lat: "",
-        lng: "",
+        latitude: "",
+        longitude: "",
       });
     } catch (err) {
       console.error("Error adding tournament:", err);
@@ -101,16 +101,16 @@ const AddTournament = () => {
         <input
           type="text"
           placeholder="Latitude (e.g., 51.5074)"
-          value={form.lat}
-          onChange={(e) => setForm({ ...form, lat: e.target.value })}
+          value={form.latitude}
+          onChange={(e) => setForm({ ...form, latitude: e.target.value })}
           className="border p-2 w-full rounded"
         />
 
         <input
           type="text"
           placeholder="Longitude (e.g., -0.1278)"
-          value={form.lng}
-          onChange={(e) => setForm({ ...form, lng: e.target.value })}
+          value={form.longitude}
+          onChange={(e) => setForm({ ...form, longitude: e.target.value })}
           className="border p-2 w-full rounded"
         />
 
