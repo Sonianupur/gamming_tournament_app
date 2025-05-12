@@ -3,7 +3,7 @@ import Layout from "@/components/Layout";
 export default function AboutPage() {
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-blue-900 to-blue-700 text-white px-6 py-12 flex flex-col items-center">
+      <div className="min-h-screen text-white px-6 py-12 flex flex-col items-center">
         <h1 className="text-4xl font-bold mb-6">🎮 About Tournament Hub</h1>
 
         <div className="bg-black bg-opacity-50 p-6 rounded-lg shadow-lg w-full max-w-3xl space-y-6 text-gray-200 text-sm leading-relaxed">
